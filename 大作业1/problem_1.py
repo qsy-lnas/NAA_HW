@@ -5,8 +5,8 @@ import math
 
 
 def rtheta2xy(r, theta):
-    x = 2 * math.pi - r * math.sin(theta)
-    y = 2 * math.pi + r * math.cos(theta)
+    x = 2 * math.pi + r * math.sin(theta)
+    y = 2 * math.pi - r * math.cos(theta)
     if x == 4 * math.pi:
         x -= 0.0001
     elif y == 4 * math.pi:
@@ -39,15 +39,18 @@ sourceim_type = "jpg"
 targetim_path = "qr_carts.jpg"
 targetim_type = "jpg"
 
+'''read file'''
 im = Image.open(sourceim_path)
 source_image = np.array(im)
+'''get the 0 channel of source image'''
+source_image = source_image[:, :, 0]
 image_shape = source_image.shape
 #print(image_shape, np.size(source_image))
 target_image = np.zeros(image_shape)
 for i in range(image_shape[0] * image_shape[1]):
     '''get pix_x, pix_y of this pixel in target figure'''
-    pix_x = i // image_shape[1]
-    pix_y = i % image_shape[1]
+    pix_y = i // image_shape[1]
+    pix_x = i % image_shape[1]
     '''change the coordinate to length of x, y(double)
     r, theta = x, y'''
     x, y = target_pix2xy(pix_x, pix_y, image_shape)
@@ -58,11 +61,10 @@ for i in range(image_shape[0] * image_shape[1]):
     #if x >= 474 or y >= 474:
     #    print("pix_x = %d, pix_y = %d"%(pix_x, pix_y))
     #    print("x = %f, y = %f"%(x, y))
-    if x % 1 == 0 and y % 1 == 0:
+    if (x % 1 == 0) and (y % 1 == 0):
         '''pixel locate on pixel'''
-        target_image[int(pix_x), int(pix_y)] = \
-            source_image[int(math.floor(x)), \
-                math.floor(int(y))]
+        target_image[pix_x, pix_y] = \
+            source_image[int(x), int(y)]
     else:
         x0 = int(math.floor(x))
         x1 = int(math.ceil(x))
@@ -78,23 +80,34 @@ for i in range(image_shape[0] * image_shape[1]):
         #        (pix_x, pix_y, x, y))
         if x % 1 == 0:
             '''single linear interpolation in y'''
-            p = np.dot((y - y0), source_image[x0, y1]) \
-                + np.dot((y1 - y),  source_image[x0, y0])
+            p = (y - y0) * source_image[x0, y1] \
+                + (y1 - y) * source_image[x0, y0]
         elif y % 1 == 0:
             '''single linear interpolation in x'''
-            p = np.dot((x - x0), source_image[x1, y0]) \
-                + np.dot((x1 - x), source_image[x0, y0])
+            p = (x - x0) * source_image[x1, y0] \
+                + (x1 - x) * source_image[x0, y0]
         else:
             '''interpolation in x'''
-            p0 = np.dot((y - y0), source_image[x0, y1])\
-                + np.dot((y1 - y), source_image[x0, y0])
-            p1 = np.dot((y - y0), source_image[x1, y1])\
-                + np.dot((y1 - y), source_image[x1, y0])
+            p0 = (y - y0) * source_image[x0, y1]\
+                + (y1 - y) * source_image[x0, y0]
+            p1 = (y - y0) * source_image[x1, y1]\
+                + (y1 - y) * source_image[x1, y0]
             '''interpolation in y'''
-            p = np.dot(p1, (x - x0)) + np.dot(p0, (x1 - x))
+            p = p1 * (x - x0) + p0 * (x1 - x)
         #if pix_x >= 474 or pix_y >= 474:
         #    print("pix_x = %d, pix_y = %d"%(pix_x, pix_y))
         target_image[int(pix_x), int(pix_y)] = p
+        '''debug for answer value'''
+        if pix_y == 0 and pix_x % 100 == 0:
+            print("source_pix = (%f, %f)"%(x, y))
+            print("interpoint = (%d, %d, %d, %d)"%(x0, x1, y0, y1))
+            print("target_pix = (%d, %d)"%(pix_x, pix_y))
+            print("source_value = (%d, %d, %d, %d)"%(source_image[x0, y0], \
+                source_image[x0, y1], source_image[x1,y0], source_image[x1, y1]))
+            print("target_value = %d"%target_image[pix_x, pix_y])
+            print("-----------------------")
+        
+    
 #print(target_image)
 #print(type(target_image))
 '''map t_i to 0-255(int)'''
@@ -102,11 +115,12 @@ result_image = np.zeros(image_shape)
 for i in range(image_shape[0] * image_shape[1]):
     x = i // image_shape[1]
     y = i % image_shape[1]
-    if sum(target_image[x][y]) > 1.5 * 255:
-        result_image[x][y] = 255
+    if target_image[x][y] > 0.5 * 255:
+        result_image[x][y] = 1
     else:
         result_image[x][y] = 0
-im = Image.fromarray(target_image[:, :, 0], 'RGB')
+#print(result_image[199: 201, :])
+im = Image.fromarray(target_image, 'L')
 im.save(targetim_path)
 print("Convert successfully")
             
