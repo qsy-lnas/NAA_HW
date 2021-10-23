@@ -1,8 +1,8 @@
-import numpy as np
+import math
 import matplotlib
+import numpy as np
+import imageio
 from PIL import Image
-import math 
-
 
 def rtheta2xy(r, theta):
     x = 2 * math.pi + r * math.sin(theta)
@@ -20,7 +20,6 @@ def source_xy2pix(x, y, shape):
     r != 2pi
     --------
     '''
-    
     x = x / (4 * math.pi) * shape[0]
     y = y / (4 * math.pi) * shape[1]
     return x, y
@@ -98,14 +97,14 @@ for i in range(image_shape[0] * image_shape[1]):
         #    print("pix_x = %d, pix_y = %d"%(pix_x, pix_y))
         target_image[int(pix_x), int(pix_y)] = p
         '''debug for answer value'''
-        if pix_y == 0 and pix_x % 100 == 0:
-            print("source_pix = (%f, %f)"%(x, y))
-            print("interpoint = (%d, %d, %d, %d)"%(x0, x1, y0, y1))
-            print("target_pix = (%d, %d)"%(pix_x, pix_y))
-            print("source_value = (%d, %d, %d, %d)"%(source_image[x0, y0], \
-                source_image[x0, y1], source_image[x1,y0], source_image[x1, y1]))
-            print("target_value = %d"%target_image[pix_x, pix_y])
-            print("-----------------------")
+        #if pix_x == 0:
+        #    print("source_pix = (%f, %f)"%(x, y))
+        #    print("interpoint = (%d, %d, %d, %d)"%(x0, x1, y0, y1))
+        #    print("target_pix = (%d, %d)"%(pix_x, pix_y))
+        #    print("source_value = (%d, %d, %d, %d)"%(source_image[x0, y0], \
+        #        source_image[x0, y1], source_image[x1,y0], source_image[x1, y1]))
+        #    print("target_value = %d"%target_image[pix_x, pix_y])
+        #    print("-----------------------")
         
     
 #print(target_image)
@@ -116,12 +115,21 @@ for i in range(image_shape[0] * image_shape[1]):
     x = i // image_shape[1]
     y = i % image_shape[1]
     if target_image[x][y] > 0.5 * 255:
-        result_image[x][y] = 1
+        result_image[x][y] = 255
     else:
         result_image[x][y] = 0
 #print(result_image[199: 201, :])
-im = Image.fromarray(target_image, 'L')
-im.save(targetim_path)
+
+'''different coordinate transfer'''
+temp = result_image.copy()
+result_image[:, 0: 237] = temp[:, 237: 474]
+result_image[:, 237: 474] = temp[:, 0: 237]
+temp = target_image.copy()
+target_image[:, 0: 237] = temp[:, 237: 474]
+target_image[:, 237: 474] = temp[:, 0: 237]
+imageio.imwrite(targetim_path, target_image)
+#im = Image.fromarray(result_image, 'L')
+#im.save(targetim_path)
 print("Convert successfully")
             
 
