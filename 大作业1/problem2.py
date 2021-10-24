@@ -1,9 +1,16 @@
 import numpy as np
 import math
-from 
+from tqdm import tqdm
+
+from numpy.core.numeric import Infinity
+import save_ply 
 
 file_path = "sdf.npy"
-scale = 3
+save_path = "sdf.ply"
+scale = 3.0
+step = 5e-2
+z_step =5e-3
+threshold = 1e-3
 
 def xyz2index(x, y, z):
     '''
@@ -46,9 +53,36 @@ def Trilinear(x, y, z, data):
     p = p0 * (z1 - z) + p1 * (z - z0)
     return p
 
-
-
 '''(101, 101, 101, 4)'''
 data = np.load(file_path)
-print(data.shape, type(data))
-print(data[100, 100, 100, :])
+'''surface point list'''
+sd = []
+'''min point in one interval'''
+min = Infinity
+min_pos = []
+'''x coordinate'''
+for i in tqdm(np.arange(scale * -1, scale, step)):
+    '''y coordinate'''
+    for j in np.arange(scale * -1, scale, step):
+        '''z coordinate'''
+        for k in np.arange(scale * -1, scale, z_step):
+            a = Trilinear(i, j, k, data)
+            #print(i, j, k)
+            #print(a)
+            if a < threshold and a < min:
+                '''store the min point in this interval'''
+                min = a
+                min_pos = [i, j, k]
+            elif a > min:
+                '''append the min point to ply'''
+                sd.append(min_pos)
+                '''reinit the min'''
+                min = Infinity
+                min_pos = []
+sd = np.array(sd)
+save_ply.write_ply(save_path, sd)
+print("save succeed")
+
+
+
+
