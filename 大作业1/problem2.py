@@ -110,6 +110,7 @@ for i in tqdm(np.arange(scale * -1, scale, step)):
                 '''reinit the min'''
                 min = float("inf")
                 min_pos = []
+                
             
 sd = np.array(sd)
 save_ply.write_ply(save_path, sd)
