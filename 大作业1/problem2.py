@@ -12,9 +12,9 @@ save_points_path = "surface_points.npy"
 '''the scale of cube'''
 scale = 3.0
 '''the step of x, y coordinate'''
-step = 5e-3
+step = 1e-2
 '''the step of trial in z coordinate'''
-z_step =1e-3
+z_step =5e-3
 '''the threshole of sdf in trilinear'''
 threshold = 1e-3
 
