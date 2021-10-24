@@ -91,9 +91,9 @@ sd = []
 min = float("inf")
 min_pos = []
 '''x coordinate'''
-for i in tqdm(np.arange(scale * -1, scale, step)):
+for i in tqdm(np.arange(0, scale, step)):
     '''y coordinate'''
-    for j in np.arange(scale * -1, scale, step):
+    for j in np.arange(0, scale, step):
         '''z coordinate'''
         for k in np.arange(scale * -1, scale, z_step):
             a = Trilinear(i, j, k, data)
@@ -105,12 +105,15 @@ for i in tqdm(np.arange(scale * -1, scale, step)):
                 min_pos = [i, j, k]
             elif abs(a) > threshold and abs(a) > min:
                 '''append the min point to ply'''
-                print(len(sd), min_pos, "a =", a, "min = ", min)
+                #print(len(sd), min_pos, "a =", a, "min = ", min)
                 sd.append(min_pos)
+                sd.append([min_pos[0], -min_pos[1], min_pos[2]])
+                sd.append([-min_pos[0], min_pos[1], min_pos[2]])
+                sd.append([-min_pos[0], -min_pos[1], min_pos[2]])
                 '''reinit the min'''
                 min = float("inf")
                 min_pos = []
-                
+
             
 sd = np.array(sd)
 save_ply.write_ply(save_path, sd)
