@@ -7,16 +7,16 @@ from tqdm import tqdm
 import save_ply
 
 file_path = "sdf.npy"
-save_path = "sdf.ply"
-save_points_path = "surface_points.npy"
+save_path = "sdf_1.ply"
+save_points_path = "surface_points_1.npy"
 '''the scale of cube'''
 scale = 3.0
 '''the step of x, y coordinate'''
-step = 1e-2
+step = 5e-3
 '''the step of trial in z coordinate'''
-z_step =5e-3
+z_step = 5e-3
 '''the threshole of sdf in trilinear'''
-threshold = 1e-3
+threshold = 1e-4
 
 def xyz2index(x, y, z):
     '''
@@ -80,8 +80,6 @@ def Trilinear(x, y, z, data):
     #    print("----------------------------------")
     #    os.system("pause")
     return p
-
-
 
 '''(101, 101, 101, 4)'''
 data = np.load(file_path)

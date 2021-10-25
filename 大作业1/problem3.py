@@ -1,13 +1,13 @@
 import numpy as np
 
-file_path = "surface_points.npy"
+file_path = "surface_points_1.npy"
 #file_path = "surface_points_1e-2.npy"
 #file_path = "result.npy"
 '''(len, 3)'''
 data = np.load(file_path)
 epsilon = 1e-10
-lowerbound = 4e-4
-higherbound = 2e2
+lowerbound = 1e-3
+higherbound = 1e3
 
 data[data == 0] = epsilon
 x2, y2, z2 = data[:, 0] ** 2, data[:, 1] ** 2, data[:, 2] ** 2
