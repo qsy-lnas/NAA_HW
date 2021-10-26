@@ -1,0 +1,105 @@
+%不需修改部分
+\documentclass[UTF8]{ctexart}  %使用中文版的article文档类型排版，并选择UTF8编码格式
+\usepackage{amsmath}
+\usepackage[colorlinks,linkcolor=black,anchorcolor=blue,citecolor=green]{hyperref}    %修改特定内容的颜色
+\usepackage{enumerate}                      %条目包
+\usepackage{float}                          %固定表格位置
+\usepackage{graphicx}                       %图片包
+\usepackage{float}                          %设置图片浮动位置的宏包
+\usepackage{subfigure}                      %插入多图时用子图显示的宏包
+\usepackage{titlesec}                       %自定义多级标题格式的宏包
+\usepackage{geometry}
+\usepackage{wrapfig}
+\pagestyle{plain}						    %显示页码
+\RequirePackage{fix-cm}                     
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{diagbox}
+\usepackage{multirow} %合并多行单元格的宏包
+\usepackage{longtable} %不宽但很长的表格可以用longtable宏包来进行分页显示
+\usepackage{array} %一般用于数学公式中对数组或矩阵的排版
+\usepackage{makecell}% makecell命令对表格单元格中的数据进行一些变换的控制。我们可以使用 \ 命令进行换行，也可以使用p{(宽度)}选项控制列表的宽度
+\usepackage{threeparttable} %制作三线表格
+\usepackage{booktabs}%s三线表格中的上中下直线线型设置宏包，在这个包中水平线被教程\toprule、midrule、buttomrule。
+
+%各级标题格式自定义
+% \titleformat{\section}[block]{\Large\bfseries}{\arabic{section}\quad }{1em}{}[]
+% \titleformat{\subsection}[block]{\large\itshape\bfseries}{\arabic{section}.\arabic{subsection}}{1em}{}[]
+% \titleformat{\subsubsection}[block]{\normalsize\bfseries}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}{1em}{}[]
+% \titleformat{\paragraph}[block]{\small\bfseries}{[\arabic{paragraph}]}{1em}{}[]
+
+\linespread{1.5}
+
+\geometry{a4paper,left=2cm,right=2cm,top=2cm,bottom=2cm}
+
+\begin{document}  %开始写文章
+
+\begin{titlepage} %制作封面
+    \heiti
+    \vspace*{100pt}
+    \begin{center}
+        \fontsize{30pt}{0} 模\quad 拟\quad 电\quad 子\quad 技\quad 术\quad 基\quad 础\quad \\
+        \vspace*{36pt}
+        \fontsize{36pt}{0}{综\quad 合\quad 论\quad 文}\\
+        \vspace*{48pt}
+        \LARGE（2020\ -\ 2021\ 学年度\qquad 春季学期）\\
+        \vspace*{48pt}
+
+        \fontsize{20pt}{0} \ \underline{\makebox[450pt]{Title}}\\
+        \vspace*{72pt}
+
+        \heiti\Large 姓名\ \ \underline{\makebox[168pt]{\songti Name}}\\
+        \heiti\Large 学号\ \ \underline{\makebox[168pt]{\songti ID}}\\
+        \heiti\Large 院系\ \ \underline{\makebox[168pt]{\songti 自动化系}}\\
+        \heiti\Large 教师\ \ \underline{\makebox[168pt]{\songti Teacher}}\\
+        \heiti\Large 时间\ \ \underline{\makebox[168pt]{\songti 2021年6月}}\\
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+\renewcommand{\abstractname}{\textbf{\Large \heiti 摘要}}
+
+~\\
+
+\begin{abstract}
+
+    ~\\
+
+    \large{    本文xxxxx}
+
+    
+    ~\\
+
+    \textbf{关键词}：关键词1、关键词2、关键词3
+\end{abstract}
+
+
+\newpage
+
+\tableofcontents %插入目录
+\thispagestyle{empty}
+
+\newpage
+
+\section{引言}
+
+\subsection{其余部分同实验报告模板\footnote{liuzuyan19@mails.tsinghua.edu.cn}}
+
+
+\newpage
+
+%此处参考文献适用于参考文献较少的情况，需手动设置，若需自动设置可以参考其他方法
+\begin{thebibliography}{}
+    \bibitem{1}童诗白, 华成英. 模拟电子技术基础(第五版)[M].北京: 高等教育出版社, 2015.
+    \bibitem{2}杨祥伦.对数运算电路基本特性的分析和应用实例[J].自动化技术与应用,1983(03):95-101.
+    \bibitem{3}模拟电子技术基础课件 第10周
+    \bibitem{4}对数运算电路 - 电子常识 - 电子发烧友网\\\url{http://www.elecfans.com/dianzichangshi/20100423216688.html}
+    \bibitem{5}Single-Supply, High-Speed, Precision Logarithmic Amplifier datasheet (Rev. A)\\\url{https://www.ti.com.cn/cn/lit/ds/symlink/log114.pdf?ts=1623404510251}
+    \bibitem{6}周向明,姚建纯.对数运算电路的温度误差及其补偿[J].电测与仪表,1986(01):11-13.
+\end{thebibliography}
+
+\end{document}  %结束写文章
