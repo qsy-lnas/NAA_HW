@@ -1,6 +1,26 @@
 import gmpy2
 from gmpy2 import mpq
 from gmpy2 import mpz
+from gmpy2 import mpfr
+
+def method_error(n, z):
+    '''n = iters, z = z*'''
+    a = gmpy2.sub(gmpy2.exp(gmpy2.mul(mpz(1), z)), mpz(1))
+    b = gmpy2.div(gmpy2.square(z), gmpy2.square(n))
+    ab = gmpy2.mul(a, b)
+    method_err = gmpy2.mul(mpq(1.25), ab)
+    return method_err
+
+def round_error(n, z, x):
+    '''n = iters, z = z*, x = x*'''
+    a = gmpy2.sub(gmpy2.exp(gmpy2.mul(mpz(1), z)), mpz(1))
+    b = gmpy2.mul(gmpy2.div(n, z), gmpy2.exp10(x))
+    ab = gmpy2.mul(a, b)
+    round_err = gmpy2.mul(mpz(2), ab)
+    return round_err
+
+def f(z, w):
+    return gmpy2.div(mpz(1), gmpy2.add(z, gmpy2.exp(w)))
 
 '''get the z and x'''
 z_exp = input("z = ")
@@ -10,14 +30,39 @@ z_exp_mpq =  mpq(z_exp)
 #print(z_exp_mpq)
 
 '''Calculate n'''
-n = mpq(1)
-n_times = 200
+n = mpz(1)
+n_times = mpz(200)
 #1.75 * 
-a = gmpy2.sub(gmpy2.exp(gmpy2.mul(2, z_exp_mpq)), 1)
-b = gmpy2.div(gmpy2.square(z_exp_mpq), gmpy2.mul(2, gmpy2.square(n)))
-ab = gmpy2.mul(a, b)
-round_err_pre = gmpy2.mul(1.75, ab)
-while()
+method_err_pre = method_error(n, z_exp_mpq)
+method_err_exp = gmpy2.mul(mpq(0.25), gmpy2.exp10(gmpy2.mul(x_mpq, mpz(-1))))
+#print(method_err_exp)
+#print(method_err_pre)
+a = gmpy2.mul(gmpy2.sub(gmpy2.exp(z), mpz(1)), gmpy2.square(z))
+method_err = gmpy2.mul(mpq(1.25), a)
+h = gmpy2.div(z_exp_mpq, n)
+print("n = ", n)
+print("h = ", h)
 '''Calculate m'''
-
+m = mpz(1)
+round_err_exp = round_error(n, z_exp_mpq, x_mpq)
+while(round_err_exp > gmpy2.exp10(m)):
+    m = gmpy2.add(m, mpz(1))
+print("m = ", m)
 '''iter to cal w(z_exp)'''
+w = mpfr(0)
+w_bar = mpfr(0)
+z = mpfr(0)
+for i in range(n):
+    w_bar = gmpy2.add(w, gmpy2.mul(h, f(z, w)))
+    w_next = gmpy2.add(w, gmpy2.mul(gmpy2.div(h, mpz(2)), gmpy2.add(f(z, w), f(gmpy2.add(z, h), w_bar))))
+    z = gmpy2.add(z, h)
+    w = w_next
+
+
+
+'''print answer'''
+exact_str = "{0:." + str(x) + "f}"
+#print(exact_str)
+z_toprint = exact_str.format(z)
+w_toprint = exact_str.format(w)
+print("(z, w) = (", z_toprint, ", ", w_toprint, ")")
