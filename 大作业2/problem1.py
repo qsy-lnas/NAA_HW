@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import gmpy2
 from gmpy2 import mpq
 from gmpy2 import mpz
@@ -20,7 +21,8 @@ def round_error(n, z, x):
     return round_err
 
 def f(z, w):
-    return gmpy2.div(mpz(1), gmpy2.add(z, gmpy2.exp(w)))
+    return gmpy2.div(1, gmpy2.add(z, gmpy2.exp(w)))
+
 
 '''get the z and x'''
 z_exp = input("z = ")
@@ -30,15 +32,10 @@ z_exp_mpq =  mpq(z_exp)
 #print(z_exp_mpq)
 
 '''Calculate n'''
-n = mpz(1)
-n_times = mpz(200)
-#1.75 * 
-method_err_pre = method_error(n, z_exp_mpq)
 method_err_exp = gmpy2.mul(mpq(0.25), gmpy2.exp10(gmpy2.mul(x_mpq, mpz(-1))))
-#print(method_err_exp)
-#print(method_err_pre)
-a = gmpy2.mul(gmpy2.sub(gmpy2.exp(z), mpz(1)), gmpy2.square(z))
-method_err = gmpy2.mul(mpq(1.25), a)
+a = gmpy2.mul(gmpy2.sub(gmpy2.exp(z_exp_mpq), mpz(1)), gmpy2.square(z_exp_mpq))
+method_err = gmpy2.div(gmpy2.mul(mpq(1.25), a), method_err_exp)
+n = gmpy2.ceil(gmpy2.sqrt(method_err))
 h = gmpy2.div(z_exp_mpq, n)
 print("n = ", n)
 print("h = ", h)
@@ -48,15 +45,20 @@ round_err_exp = round_error(n, z_exp_mpq, x_mpq)
 while(round_err_exp > gmpy2.exp10(m)):
     m = gmpy2.add(m, mpz(1))
 print("m = ", m)
-'''iter to cal w(z_exp)'''
+'''set precision'''
+gmpy2.local_context(gmpy2.context(), precision=int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))) - 10)
+print(int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
+
+'''iter to calculate w(z_exp)'''
 w = mpfr(0)
 w_bar = mpfr(0)
 z = mpfr(0)
-for i in range(n):
+for i in tqdm(range(int(n))):
     w_bar = gmpy2.add(w, gmpy2.mul(h, f(z, w)))
-    w_next = gmpy2.add(w, gmpy2.mul(gmpy2.div(h, mpz(2)), gmpy2.add(f(z, w), f(gmpy2.add(z, h), w_bar))))
+    w_next = gmpy2.add(w, gmpy2.mul(gmpy2.div(h, 2), gmpy2.add(f(z, w), f(gmpy2.add(z, h), w_bar))))
     z = gmpy2.add(z, h)
     w = w_next
+    #if i % 1000 == 0: print(w)
 
 
 
