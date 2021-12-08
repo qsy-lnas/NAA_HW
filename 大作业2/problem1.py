@@ -39,7 +39,7 @@ def calw0z(z_exp_mpq, x_mpq, if_tqdm):
         m = gmpy2.add(m, mpz(1))
     print("m(10) = ", m)
     '''set precision'''
-    gmpy2.local_context(gmpy2.context(), precision=int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))) - 10)
+    gmpy2.local_context(gmpy2.context(), precision=int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
     print("m(2) = ", int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
 
     '''iter to calculate w(z_exp)'''
@@ -67,7 +67,7 @@ def calw0z(z_exp_mpq, x_mpq, if_tqdm):
 if __name__ == "__main__":
     '''get the z and x'''
     z_exp = input("z = ")
-    x = input("Exact to:")
+    x = input("Precision[int]:")
     x_mpq = mpz(x)
     z_exp_mpq =  mpq(z_exp)
     if_tqdm = input("use tqdm[y/n]:")
