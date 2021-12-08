@@ -30,9 +30,9 @@ $$
 w' = f(z, w) = \frac{1}{z + e^w}\\
 以x表示精确到小数点后第x位，则有总误差e \leq \frac{1}{2} \times 10^{-x}\\
 以w^*表示待求解的值，给定的z = z^*，则有W(z^*) = w^*\\
-所以z从z_0 = 0迭代至z_n = Z^*, n = \frac{z^*}{h}, h = \frac{z^*}{n}\\
+所以z从z_0 = 0迭代至z_n = z^*, n = \frac{z^*}{h}, h = \frac{z^*}{n}\\
 先计算导数上界\\\begin{align}
-|\frac{\partial f}{\partial w}|  &= |\frac{2 + w}{(1 + w)^2\cdot e^w}| \leq  |\frac{2 + 0}{(1 + 0)^2} = 2 = M\\
+|\frac{\partial f}{\partial w}|  &= |\frac{e^w}{(z + e^w)^2}| \leq  |\frac{1}{(1 + 0)^2} = 1 = M\\
 |W''(z)| &= |\frac{(2 + w)}{(1 + w)^3\cdot e^{2w}}| \leq |\frac{(2 + 0)}{(1 + 0)^3\cdot e^{0}}| \leq 2 = L \\
 |W^{(3)}(z)| &=  |\frac{(2w^2 + 8w + 9)}{(1 + w)^5\cdot e^{3w})} | \leq |\frac{(2w^2 + 8w + 9)}{(1 + w)^5\cdot e^{3w})} | \leq |\frac{(0 + 9)}{(1 + 0)^5\cdot e^{0})} | \leq 9 = T \\ 
 \end{align}
@@ -66,15 +66,25 @@ $$
 $$
 
 $$
-其中，M = 2, L = 2, T = 9, h = \frac{z^*}{n}\\
+其中，M = 1, L = 2, T = 9, h = \frac{z^*}{n}\\
 \therefore \left\{
 \begin{align}
-&由1.75\times(e^{2z^*} - 1)\frac{{z^*}^2}{2n^2} \leq 0.25 \times 10^{-x}解得n的值（向上取整）\\
-&由n的值及2\times(e^{2z^*} - 1)\frac{n}{2z^*}\times10^{x} \leq 10^{m}解得m的值（向上取整）\\
+&由1.25\times(e^{z^*} - 1)\frac{{z^*}^2}{n^2} \leq 0.25 \times 10^{-x}解得n的值（向上取整）\\
+&由n的值及2\times(e^{z^*} - 1)\frac{n}{z^*}\times10^{x} \leq 10^{m}解得m的值（向上取整）\\
 \end{align}
 \right.\\
 根据解出的n, m即可得到应当进行多少次迭代以及每次迭代后保留多少位有效数字，\\
 由上述推到过程可知，基于上述的n, m得到的微分方程的解一定满足要求的精度\frac{1}{2}\times10^{-x}
+$$
+
+$$
+基于上述过程求得的参数，利用如下所示的改进欧拉法解微分方程：\\
+\left\{
+\begin{align}
+\bar{w}_{n +1} &= w_n + h\cdot f(w, z)\\
+w_{n + 1} &= w_n + \frac{h}{2}[f(w_{n}, z_{n}) + f(\bar{w}_{n + 1}, z_{n + 1})]
+\end{align}
+\right.
 $$
 
 
