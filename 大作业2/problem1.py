@@ -30,8 +30,8 @@ def calw0z(z_exp_mpq, x_mpq, if_tqdm):
     method_err = gmpy2.div(gmpy2.mul(mpq(1.25), a), method_err_exp)
     n = gmpy2.ceil(gmpy2.sqrt(method_err))
     h = gmpy2.div(z_exp_mpq, n)
-    print("n = ", n)
-    print("h = ", h)
+    #print("n = ", n)
+    #print("h = ", h)
     '''Calculate m'''
     m = mpz(1)
     round_err_exp = round_error(n, z_exp_mpq, x_mpq)
@@ -70,9 +70,14 @@ if __name__ == "__main__":
     x = input("Precision[int]:")
     x_mpq = mpz(x)
     z_exp_mpq =  mpq(z_exp)
-    if_tqdm = input("use tqdm[y/n]:")
+    #if_tqdm = input("use tqdm[y/n]:")
+    if_tqdm = 'n'
     
-    z, w = calw0z(z_exp_mpq, x_mpq, if_tqdm)
+    '''Pre calculate'''
+    z0, w0 = calw0z(z_exp_mpq, 4, 'n')
+    w0 = mpz(gmpy2.ceil(gmpy2.log2(gmpy2.ceil(w0))))
+    #print(w0)
+    z, w = calw0z(z_exp_mpq, gmpy2.add(x_mpq, w0), if_tqdm)
 
     '''print answer'''
     exact_str = "{0:." + str(x) + "f}"

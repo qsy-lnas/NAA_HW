@@ -14,7 +14,8 @@ if __name__ == "__main__":
     x_mpq = mpz(x)
     x_minus_mpq = mpz("-" + x)
     a_mpq =  mpq(a)
-    if_tqdm = input("use tqdm[y/n]:")
+    #if_tqdm = input("use tqdm[y/n]:")
+    if_tqdm = 'n'
 
     '''rough calculate'''
     z0, w0 = calw0z(a_mpq, 4, "n")
