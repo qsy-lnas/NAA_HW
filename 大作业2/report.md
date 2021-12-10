@@ -97,7 +97,7 @@ $$
 
 当$z = 2$时，求得的$w = 0.852606$
 
-<img src="report.assets/image-20211208143203727.png" alt="image-20211208143203727" style="zoom:70%;" />
+<img src="report.assets/image-20211209183032954.png" alt="image-20211209183032954" style="zoom:80%;" />
 
 
 
@@ -107,7 +107,7 @@ $$
 
 本题要求进行两个定积分的求解，对于第一个定积分，可以先找到原函数后根据牛顿-莱布尼茨公式进行定积分计算。为了满足给定的误差要求，可以依据多元函数的误差传递公式得到积分结果的方法误差界与$W_0(a)$误差的关系式，之后通过估计$W_0(a)$的上界确定求解$W_0(a)$时需要满足的精度要求，再计算一遍满足精度要求的$W_0(a)$，将这个结果带入到定积分的表达式中，就可以得到需要满足精度的积分结果了。因为本积分可以找到他的原函数，因此在计算过程不需要考虑舍入误差，只需要控制方法误差小于精度要求的误差即可。
 
-对于第二个定积分，可以先进行换元得到$t = \sqrt{w}$，从而将积分转化为对$t$的积分。而利用上一题的结果可以得到任意精度的$w$值，再结合复化辛普森积分公式及其相关的误差分析就可以进行任意精度的积分运算。
+对于第二个定积分，可以先进行换元得到$t = \sqrt{w}$。再利用反函数的图像得到积分值的关系，再将对`z`的积分转化为对`t`的积分，从而能够比较容易的进行误差分析。（如不利用反函数的性质，则很难再利用复化辛普森公式进行积分时分析四阶导数项的平均值）
 
 #### 数学推导
 
@@ -142,51 +142,101 @@ $$
 \int_0^a\sqrt{W_0(z)}\mathrm{d}z\\
 令，t(z) = \sqrt{w} = \sqrt{W_0(z)}\\
 \therefore 原式变为：\int_0^at(z)\mathrm{d}z,  \ \ t(z) = \sqrt{w}\\
+为了便于进行误差分析，利用反函数性质，可以有：\\
+I = \int_0^at(z)\mathrm{d}z = a\times t(a) - \int_0^{t(a)}t^2e^{t^2}\mathrm{d}t
 $$
 
-依据复化辛普生积分公式：
+上式中$t(a)$可以进行任意精度的求解，只需要依据复化辛普生积分公式计算出第二个积分项即可：
 $$
-I  = \int_0^at(z)\mathrm{d}z = \frac{h}{6}[t(0) + 2\sum_{k = 1}^{n - 1}t(z_k) + 4\sum_{k = 0}^{n - 1}t(z_k + \frac{h}{2}) + t(a)]\\
+I_1 = \int_0^{t(a)}t^2e^{t^2}\mathrm{d}t = \frac{h}{6}[0 + 2\sum_{k = 1}^{n - 1}t_{k}^2e^{t_{k}^2} + 4\sum_{k = 0}^{n - 1}(t_{k} + \frac{h}{2})^2e^{(t_{k} + \frac{h}{2})^2} + t(a)e^{t(a)^2}]\\
 $$
-只需依据要求的精度求出所需的等分子区间$n$的个数以及相对应的$h = \frac{a}{n}$即可进行积分求解，下面进行误差分析，计算所需的$n$：
+只需依据要求的精度求出所需的等分子区间$n$的个数以及相对应的$h = \frac{t(a)}{n}$即可进行积分求解，下面进行误差分析，计算所需的$n$：
 $$
 \begin{align}
-R[t] &= \sum_{k = 0}^{n - 1}R_k[t]\\
-& = \sum_{k = 0}^{n - 1}-\frac{h^5}{2880}t^{(4)}(\eta_k), \ \ \eta_k \in [z_k, z_{k + 1}]\\
-& = -\frac{n\cdot h^5}{2880}t^{(4)}(\eta)
+f(t) &\triangleq t^2e^{t^2}, 方法误差如下：\\
+R_m[f] &= \sum_{k = 0}^{n - 1}R_k[f]\\
+& = \sum_{k = 0}^{n - 1}-\frac{h^5}{2880}f^{(4)}(\eta_k), \ \ \eta_k \in [t_k, t_{k + 1}]\\
+& = -\frac{t(a)^5}{2880n^4}f^{(4)}(\eta)\\
+\end{align}\\
+$$
+
+$$
+\because f^{(4)}(t) = (24 + 156t^2 + 112t^4 + 16t^6)e^{t^2}\\
+\because f^{(4)}(t)单调递增，所以有：\\
+R_m[f] = |\frac{t(a)^5}{2880n^4}f^{(4)}(\eta)| \leq |\frac{t(a)^5}{2880n^4}(t(a))|\\
+ = \frac{t(a)^5}{2880n^4}(24 + 156t(a)^2 + 112t(a)^4 + 16t(a)^6)e^{t(a)^2}\\
+上式即为积分求解的方法误差上界,下分析舍入误差：\\
+$$
+
+本问中的舍入误差应当来源于计算$t(a)$时的误差被带入进了$t_k$的计算中,下逐项分析辛普生积分公式中包含的舍入误差：
+
+首先做变量代换并分析误差来源：
+$$
+t_k = k\cdot h, \ \ h = \frac{t(a)}{n}, \ \ \delta[t(a)] = \frac{1}{2}\times 10^{-m}\\
+\therefore t_k = k \cdot \frac{t(a)}{n}\\
+\\\delta[h] = \frac{1}{2n}\times10^{-m}, \ \ \delta[t_k] = \frac{k}{2n}\times10^{-m}\\
+$$
+$ht_k^2e^{t_k^2}$:
+$$
+\begin{align}
+\delta [\alpha_{1k}] &= \delta(ht_k^2e^{t_k^2})\\
+& = \delta[\frac{t(a)}{n}\times \frac{k^2}{n^2}\cdot t(a)^2\cdot e^{\frac{k^2}{n^2}\cdot t(a)^2}]\\
+&= \frac{\partial \alpha_{1k}}{\partial t(a)} \cdot \delta[t(a)]\\
+& = \frac{k^2}{n^3}\cdot t(a)^2\cdot e^{\frac{k^2}{n^2}\cdot t(a)^2}\cdot(3 + 2t(a)^2\frac{k^2}{n^2})\cdot \delta[t(a)]\\
+& \leq \frac{3t(a)^2 + 2t(a)^4}{n}\cdot e^{t(a)^2}\cdot \delta[t(a)]\\
 \end{align}
+$$
+$h(t_{k} + \frac{h}{2})^2e^{(t_{k} + \frac{h}{2})^2}$
+$$
+\begin{align}
+\delta[\alpha_{2k}] & = \delta(h(t_{k} + \frac{h}{2})^2e^{(t_{k} + \frac{h}{2})^2})\\
+& = \delta[\frac{t(a)}{n}\times(\frac{2k + 1}{2n})^2\cdot t(a)^2\cdot e^{(\frac{2k + 1}{2n})^2\cdot t(a)^2}]\\
+& = \frac{\partial \alpha_{2k}}{\partial t(a)} \cdot \delta[t(a)]\\
+& = \frac{(2k + 1)^2}{4n^3}\cdot t(a)^2\cdot e^{\frac{(2k + 1)^2}{4n^2}\cdot t(a)^2}\cdot(3 + 2t(a)^2\frac{(2k + 1)^2}{4n^2})\\
+& \leq \frac{3t(a)^2 + 2t(a)^4}{n}\cdot e^{t(a)^2}\cdot \delta[t(a)]\\
+
+\end{align}
+$$
+与此同时，容易得到，积分公式中的其他两项引入的误差如下所示：
+$$
+\delta[0] = 0\\
+\delta[t(a)^2e^{t(a)^2}] \leq \frac{3t(a)^2 + 2t(a)^4}{n}\cdot e^{t(a)^2}\cdot \delta[t(a)]\\
+$$
+综上，本题中利用积分公式计算时引入的舍入总误差如下所示：
+$$
+\begin{align}
+R_r[f] &= \frac{1}{6}\cdot(\delta[0] + \delta[t(a)^2e^{t(a)^2}]) + \frac{1}{3}\cdot n \cdot \delta [\alpha_{1k}] + \frac{2}{3} \cdot n\cdot \delta[\alpha_{2k}]\\
+&\leq (\frac{7}{2}\cdot t(a)^2 + \frac{7}{3}t(a)^4)\cdot e^{t(a)^2}\cdot \delta[t(a)]\\
+&= (\frac{7}{2}\cdot t(a)^2 + \frac{7}{3}t(a)^4)\cdot e^{t(a)^2}\cdot \frac{1}{2}\times 10^{-m}\\
+\end{align}
+$$
+假定积分结果需要有效位数为`x`的精度，则不妨假设方法误差与舍入误差各贡献一半的总误差：
+$$
+\left\{
+\begin{align}
+R_m[f] &\leq \frac{t(a)^5}{2880n^4}(24 + 156t(a)^2 + 112t(a)^4 + 16t(a)^6)e^{t(a)^2}& = \frac{1}{4}\times 10^{-x}\\
+R_r[f] & \leq (\frac{7}{2}\cdot t(a)^2 + \frac{7}{3}t(a)^4)\cdot e^{t(a)^2}\cdot \frac{1}{2}\times 10^{-m} &= \frac{1}{4}\times 10^{-x}\\
+\end{align}
+\right.
+$$
+所以，$t(a)$的精度$m$与积分的小区间个数$n$须满足下列关系式：
+$$
+\left\{
+\begin{align}
+\frac{t(a)^5}{720}(24 + 156t(a)^2 + 112t(a)^4 + 16t(a)^6)e^{t(a)^2}& \cdot 10^{-x}\leq  n^4\\
+(\frac{7}{2}\cdot t(a)^2 + \frac{7}{3}t(a)^4)\cdot e^{t(a)^2}\cdot 2\times 10^{x} &\leq 10^{m}\\
+\end{align}
+\right.
 $$
 
 
 #### 误差分析
 
-本题的误差主要来源于方法误差与舍入误差：
-
-**方法误差**如下：
-
-类似于双线性插值,且假设相同时，我们不难由双线性插值的误差公式类推出三线性插值的误差公式，分析如下：
-
-双线性插值与三线性插值均为线性插值计算，具有线性性，而在进行误差分析时，均使用的是对所求点附近泰勒展开的方式。由双线性插值的计算过程可知，偏导的交叉项与一次项均可以与固定值约去，因此均只保留了二阶偏导项，由此推知，三线性插值的**方法误差界**为：
-$$
-R \le \frac{1}{8}M + \frac{1}{4} = \frac{3}{8}M
-$$
-**舍入误差**如下：
-
-同上问的分析结论，计算过程中由于python的数据位长足够，因此计算中的舍入误差可以被充分忽略，因而可以只考虑保存文件过程中产生的舍入误差，观察sdf文件，发现保留了9位有效数字，因此舍入误差$\Delta_0 = \frac{1}{2} \times 10^{-8}$
-
-由插值公式计算由于原始数据的舍入带来的舍入误差：
-$$
-R_2 \le p^{-3} \times p^3\times\Delta_0 = \frac{1}{2}\times10^{-8}
-$$
-总误差界即为方法误差与舍入误差之和
+见上述数学推导部分。
 
 #### 作图结果
 
-<img src="report.assets/image-20211111230526051.png" alt="image-20211111230526051" style="zoom: 16%;" />
 
-<img src="report.assets/image-20211111230619028.png" alt="image-20211111230619028" style="zoom:16%;" />
-
-<img src="report.assets/image-20211111230720486.png" alt="image-20211111230720486" style="zoom:25%;" />
 
 
 
