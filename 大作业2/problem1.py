@@ -37,10 +37,10 @@ def calw0z(z_exp_mpq, x_mpq, if_tqdm):
     round_err_exp = round_error(n, z_exp_mpq, x_mpq)
     while(round_err_exp > gmpy2.exp10(m)):
         m = gmpy2.add(m, mpz(1))
-    print("m(10) = ", m)
+    #print("m(10) = ", m)
     '''set precision'''
     gmpy2.local_context(gmpy2.context(), precision=int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
-    print("m(2) = ", int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
+    #print("m(2) = ", int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
 
     '''iter to calculate w(z_exp)'''
     w = mpfr(0)
@@ -59,8 +59,12 @@ def calw0z(z_exp_mpq, x_mpq, if_tqdm):
             w_next = gmpy2.add(w, gmpy2.mul(gmpy2.div(h, 2), gmpy2.add(f(z, w), f(gmpy2.add(z, h), w_bar))))
             z = gmpy2.add(z, h)
             w = w_next
-
-    
+    exact_str = "{0:." + str(m) + "f}"
+    #print(exact_str)
+    z = exact_str.format(z)
+    w = exact_str.format(w)
+    z = mpq(z)
+    w = mpq(w)
     return z, w
 
 
@@ -78,7 +82,8 @@ if __name__ == "__main__":
     w0 = mpz(gmpy2.ceil(gmpy2.log2(gmpy2.ceil(w0))))
     #print(w0)
     z, w = calw0z(z_exp_mpq, gmpy2.add(x_mpq, w0), if_tqdm)
-
+    z = mpfr(z, int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), gmpy2.add(x_mpq, 4))))) 
+    w = mpfr(w, int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), gmpy2.add(x_mpq, 4)))))
     '''print answer'''
     exact_str = "{0:." + str(x) + "f}"
     #print(exact_str)
