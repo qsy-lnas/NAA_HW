@@ -6,7 +6,7 @@ from gmpy2 import mpfr
 
 from problem1 import calw0z
 
-def caln(t, x_minus):
+def caln(t, x):
     t2 = gmpy2.square(t) # t^2
     t4 = gmpy2.square(t2) # t^4
     t5 = gmpy2.mul(t4, t) # t^5
@@ -20,7 +20,7 @@ def caln(t, x_minus):
     a_temp = gmpy2.mul(16, t6)
     a1 = gmpy2.add(a1, a_temp)
     a2 = gmpy2.exp(t2)
-    a3 = gmpy2.exp10(x_minus) 
+    a3 = gmpy2.exp10(x) 
     a = gmpy2.mul(a0, a1)
     a = gmpy2.mul(a, a2)
     a = gmpy2.mul(a, a3) # n^4
@@ -30,7 +30,7 @@ def caln(t, x_minus):
     n = mpz(n)
     return n
 
-def calm(t, x):
+def calm(t, x, n):
     t2 = gmpy2.square(t)
     t4 = gmpy2.square(t2)
     a1 = gmpy2.mul(mpq(3.5), t2)
@@ -39,13 +39,15 @@ def calm(t, x):
     a4 = gmpy2.exp10(x)
     a4 = gmpy2.mul(2, a4)
     a = gmpy2.add(a1, a2)
+    a = gmpy2.add(a, gmpy2.mul(2, n))
     a = gmpy2.mul(a, a3)
     a = gmpy2.mul(a, a4)
-    m = gmpy2.ceil(gmpy2.log10(a))
+    m = mpz(gmpy2.ceil(gmpy2.log10(a)))
     return m
     
 def cali1(t, n):
-    h = mpq(t, n)
+    h = mpq(gmpy2.div(t, n))
+    #print("h", h)
     a1 = mpq(0)
     for i  in range(1, int(n)):
         tk = gmpy2.mul(i, h)
@@ -63,6 +65,7 @@ def cali1(t, n):
         a2 = gmpy2.add(a2, a2k)
     t2 = gmpy2.square(t)
     a3 = gmpy2.mul(t2, gmpy2.exp(t2))
+    #print("A3", a3)
     a = gmpy2.add(a1, gmpy2.add(a2, a3))
     i1 = gmpy2.mul(gmpy2.div(h, 6), a)
     return i1
@@ -83,19 +86,29 @@ if __name__ == "__main__":
     t0 = gmpy2.sqrt(w0)
 
     '''calculate n'''
-    n = caln(t0, x_minus_mpq)
+    n = caln(t0, x_mpq)
+    print("n = ", n)
 
     '''calculate m'''
-    m = calm(t0, x_mpq)
+    m = calm(t0, x_mpq, n)
+    print("m = ", m)
     gmpy2.local_context(gmpy2.context(), precision=int(gmpy2.ceil(gmpy2.mul(gmpy2.log2(10), m))))
 
     '''recalculate t'''
     z1, w1 = calw0z(a_mpq, m, "n")
+    #t1 = mpq(0.75308926)
     t1 = gmpy2.sqrt(w1)
+    #print(type(t1))
+    exact_str = "{0:." + str(int(m + 1)) + "f}"
+    t_str = exact_str.format(t1)
+    t1 = mpq(t_str)
+    #print("z1 = ", z1)
 
     '''calculate integral'''
     i1 = cali1(t1, n)
+    #print(type(i1))
     i = gmpy2.sub(gmpy2.mul(a_mpq, t1), i1)
+    #print(type(i))
 
     '''print result'''
     exact_str = "{0:." + str(x_mpq) + "f}"
@@ -105,3 +118,6 @@ if __name__ == "__main__":
     z_toprint = exact_str.format(z1)
     i_toprint = exact_str.format(i)
     print("(z, i) = (", z_toprint, ", ", i_toprint, ")")
+
+
+    
